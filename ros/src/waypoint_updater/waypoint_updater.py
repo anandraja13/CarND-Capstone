@@ -34,7 +34,7 @@ class WaypointUpdater(object):
         self.pose = None
         self.base_waypoints = None
         self.waypoints_2d = None
-        self.waypoints_tree = None
+        self.waypoint_tree = None
         self.stopline_wp_idx =-1
         
         # Create subscribers
@@ -84,6 +84,10 @@ class WaypointUpdater(object):
         return closest_idx
     
     def publish_waypoints(self):
+        # If waypoints don't exist for some reason, return without publishing
+        if not self.waypoint_tree:
+            return
+        
         # Call generate lane function to get waypoints and velocities
         final_lane = self.generate_lane()
         
@@ -113,8 +117,8 @@ class WaypointUpdater(object):
         return lane
     
     def decelerate_waypoints(self, waypoints, closest_idx):
-        tmp = []
-        return temp
+        temp = []
+        
         for i, wp in enumerate(waypoints):
             p = Waypoint()
             p.pose = wp.pose
