@@ -31,6 +31,7 @@ that we have created in the `__init__` function.
 
 '''
 
+##### Note from Neel: This code is entirely untested.
 class DBWNode(object):
     def __init__(self):
         rospy.init_node('dbw_node')
@@ -57,6 +58,18 @@ class DBWNode(object):
         # self.controller = Controller(<Arguments you wish to provide>)
 
         # TODO: Subscribe to all the topics you need to
+        rospy.Subscriber('/vehicle/dbw/enabled', Bool, self.dbw_enabled_cb)
+        rospy.Subscriber('/twist_cmd', TwistStamped, self.twist_cb)
+        rospy.Subscriber('/current_velocity', TwistStamped, self.velocity_cb)
+
+        self.current_velocity = None
+        self.current_angular_velocity = None
+        self.dbw_enabled = None
+        self.linear_velocity = None
+        self.angular_velocity = None
+        self.throttle = 0
+        self.brake = 0
+        self.steering = 0
 
         self.loop()
 
@@ -72,6 +85,13 @@ class DBWNode(object):
             #                                                     <any other argument you need>)
             # if <dbw is enabled>:
             #   self.publish(throttle, brake, steer)
+            if not None in (self.current_velocity, self.linear_velocity, self.angular_velocity):
+                    self.throttle, self.brake, self.steering = self.controller.control(self.current_velocity,
+                                                                                        self.dbw_enabled,
+                                                                                        self.linear_velocity,
+                                                                                        self.angular_velocity)
+                    if self.dbw_enabled:
+                        self.publish(self.throttle, self.brake, self.steering)
             rate.sleep()
 
     def publish(self, throttle, brake, steer):
