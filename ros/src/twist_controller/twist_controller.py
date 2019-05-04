@@ -1,3 +1,7 @@
+import rospy
+from yaw_controller import YawController
+from pid import PID
+from lowpass import LowPassFilter
 
 GAS_DENSITY = 2.858
 ONE_MPH = 0.44704
@@ -19,12 +23,12 @@ class Controller(object):
         ts = .02 #Sample Time
         self.vel_lpf = LowPassFilter(tau, ts)
         
-        self.vehicle_mass
-        self.fuel_capacity
-        self.brake_deadband
-        self.decel_limit
-        self.accel_limit
-        self.wheel_radius
+        self.vehicle_mass = vehicle_mass
+        self.fuel_capacity = fuel_capacity
+        self.brake_deadband = brake_deadband
+        self.decel_limit = decel_limit
+        self.accel_limit = accel_limit
+        self.wheel_radius = wheel_radius
 
         self.last_time = rospy.get_time()
 
