@@ -26,7 +26,6 @@ class TLDetector(object):
         self.waypoints_2d = None
         self.waypoint_tree = None
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -35,6 +34,9 @@ class TLDetector(object):
         self.state_count = 0
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
+        self.is_site = self.config["is_site"]
+        
+        self.light_classifier = TLClassifier(self.is_site)
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
