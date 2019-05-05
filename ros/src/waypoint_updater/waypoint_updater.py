@@ -23,7 +23,7 @@ as well as to verify your TL classifier.
 TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
-LOOKAHEAD_WPS = 200 # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 100 # Number of waypoints we will publish. You can change this number
 MAX_DECEL = 0.5 # Maximum deceleration factor. Can be tuned
 
 class WaypointUpdater(object):
@@ -43,15 +43,14 @@ class WaypointUpdater(object):
         rospy.Subscriber('/traffic_waypoint', Int32, self.traffic_cb)
 
         # TODO: Add a subscriber for /obstacle_waypoint below
-
-
+        
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
         # Call the loop to run periodically
         self.loop()
 
     def loop(self):
-        rate = rospy.Rate(50)
+        rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             if self.pose and self.base_waypoints:
                 #Publish waypoints
@@ -86,10 +85,17 @@ class WaypointUpdater(object):
     def publish_waypoints(self):
         # If waypoints don't exist for some reason, return without publishing
         if not self.waypoint_tree:
+            rospy.logwarn('Waypoints do not exist')
             return
         
         # Call generate lane function to get waypoints and velocities
         final_lane = self.generate_lane()
+        
+        waypts = final_lane.waypoints
+        for i,wp in enumerate(waypts):
+            if (i % 50) == 0:
+                vel = wp.twist.twist.linear.x
+                #rospy.loginfo("Computed velocity at {0}: {1} m/s".format(i, vel))
         
         # Publish waypoints
         self.final_waypoints_pub.publish(final_lane)
@@ -98,15 +104,14 @@ class WaypointUpdater(object):
         # Create a lane message
         lane = Lane()
         
-        # Assign base header, not really used
-        lane.header = self.base_waypoints.header
-        
         # Get closest and furthest waypoint indices
         closest_idx = self.get_closest_waypoint_idx()
         farthest_idx = closest_idx + LOOKAHEAD_WPS
         
         # Splice waypoints from closest index to LOOKAHEAD_WPS points ahead / the end of waypoints
         base_waypoints = self.base_waypoints.waypoints[closest_idx : farthest_idx]
+        
+        #rospy.loginfo("Stop line waypoint index: {0}".format(self.stopline_wp_idx))
         
         # If stop line not found or beyond farthest point, return waypoints untouched, otherwise decelerate
         if (self.stopline_wp_idx == -1) or (self.stopline_wp_idx >= farthest_idx):
@@ -117,8 +122,9 @@ class WaypointUpdater(object):
         return lane
     
     def decelerate_waypoints(self, waypoints, closest_idx):
-        temp = []
         
+        rospy.loginfo('Decelerate!')
+        temp = []
         for i, wp in enumerate(waypoints):
             p = Waypoint()
             p.pose = wp.pose
@@ -128,11 +134,12 @@ class WaypointUpdater(object):
             dist = self.distance(waypoints, i, stop_idx)
             
             # Compute velocity as a square root function of distance
-            vel = math.sqrt(2 * MAX_DECEL * dist) # Could be improved by a more continuous function that has a smooth derivative like an S-curve
+            vel = math.sqrt(2 * MAX_DECEL * dist) # Could be improved using function with a smooth derivative like an S-curve
+            #rospy.loginfo("Velocity: {0}, Distance: {1}".format(vel,dist))
             
             # Zero out small velocity values
             if vel < 1:
-                vel = 0
+                vel = 0          
             
             # Assign computed velocity subject to velocity (Speed) limit
             p.twist.twist.linear.x = min(vel, wp.twist.twist.linear.x)

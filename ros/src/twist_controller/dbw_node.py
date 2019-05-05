@@ -57,7 +57,7 @@ class DBWNode(object):
         # TODO: Create `Controller` object
         self.controller = Controller(vehicle_mass, fuel_capacity, brake_deadband, decel_limit, accel_limit, wheel_radius, wheel_base, steer_ratio, max_lat_accel, max_steer_angle)
 
-        # TODO: Subscribe to all the topics you need to
+        # TODO: Subscribe to all the topics you need to 
         rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.dbw_enabled_cb)
         rospy.Subscriber('/twist_cmd', TwistStamped, self.twist_cb)
         rospy.Subscriber('/current_velocity', TwistStamped, self.velocity_cb)
@@ -86,17 +86,31 @@ class DBWNode(object):
             # if <dbw is enabled>:
             #   self.publish(throttle, brake, steer)
             if not None in (self.current_velocity, self.linear_velocity, self.angular_velocity):
-                    self.throttle, self.brake, self.steering = self.controller.control(self.current_velocity,
-                                                                                        self.dbw_enabled,
-                                                                                        self.linear_velocity,
-                                                                                        self.angular_velocity)
-                    if self.dbw_enabled:
-                        self.publish(self.throttle, self.brake, self.steering)
+                rospy.loginfo(
+                    "Current velocity: {0}, Linear velocity: {1}, Angular Velocity: {2}, DBW Enabled: {3}".format(
+                        self.current_velocity,
+                        self.linear_velocity,
+                        self.angular_velocity,
+                        self.dbw_enabled))
+                
+                self.throttle, self.brake, self.steering = self.controller.control(self.current_velocity,
+                                                                                   self.dbw_enabled,
+                                                                                   self.linear_velocity,
+                                                                                   self.angular_velocity)
+            if self.dbw_enabled:
+                rospy.loginfo('Throttle: {0}, Break: {1}, Steering: {2}'.format(
+                    self.throttle,
+                    self.brake,
+                    self.steering))
+                self.publish(self.throttle, self.brake, self.steering)
             rate.sleep()
+        
     def dbw_enabled_cb(self, msg):
         self.dbw_enabled = msg
+    
     def velocity_cb(self, msg):
         self.current_velocity = msg.twist.linear.x
+    
     def twist_cb(self, msg):
         self.linear_velocity = msg.twist.linear.x
         self.angular_velocity = msg.twist.angular.z
