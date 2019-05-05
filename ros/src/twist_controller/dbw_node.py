@@ -99,7 +99,7 @@ class DBWNode(object):
         self.current_velocity = msg.twist.linear.x
     def twist_cb(self, msg):
         self.linear_velocity = msg.twist.linear.x
-        self.angular_velocit = msg.twist.angular.z
+        self.angular_velocity = msg.twist.angular.z
 
     def publish(self, throttle, brake, steer):
         tcmd = ThrottleCmd()
