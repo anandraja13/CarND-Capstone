@@ -14,7 +14,7 @@ class Controller(object):
         self.yaw_controller = YawController(wheel_base, steer_ratio, .1, max_lat_accel, max_steer_angle)
         kp = 0.3
         ki = 0.1
-        kd = 0.0
+        kd = 0.05
         mn = 0.0 #Minimum Throttle Value
         mx = 0.2 #Maximum Throttle Value
         self.throttle_controller = PID(kp, ki, kd, mn, mx)
