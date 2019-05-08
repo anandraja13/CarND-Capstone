@@ -14,7 +14,7 @@ from scipy.spatial import KDTree
 import numpy as np
 
 STATE_COUNT_THRESHOLD = 2
-WAYPOINT_THRESHOLD = 100 #minumum number of waypoints we look ahead before classifying traffic light
+WAYPOINT_THRESHOLD = 500 #minumum number of waypoints we look ahead before classifying traffic light
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
