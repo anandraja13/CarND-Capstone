@@ -14,8 +14,8 @@ This project is a group effort - the 6 of us are part of the __BluePillRedPill__
 * Anand Raja (araja@mathworks.com)
 * Neel Kowdley (nkowdley@gmail.com)
 * Ahmed Madbouly (ahmedmadbouly88@yahoo.com)
-* Soumen De (enter_email_address)
-* Zhi Chai (enter_email_address)
+* Soumen De (soumende@yahoo.com)
+* Zhi Chai (zhichaivt@gmail.com)
 
 In order to efficiently tackle the project, we divided ourselves into sub-teams as follows:
 * _Perception:_ Anand and Zhi
