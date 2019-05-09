@@ -1,4 +1,45 @@
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
+# Udacity Self-Driving Car Capstone Project
+The capstone project for the final term of the Udacity self-driving car nanodegree is a system integration project that puts together perception, planning and control modules. The Robot Operating System (ROS) middleware is used as the platform for integration.
+
+## Team: BluePillRedPill
+This project is a group effort - the 6 of us are part of the __BluePillRedPill__ team. The group effort was both rewarding. While it was interesting to meet (virtually) with people from different parts of the world interested in self-driving cars, it was also challenging to maintain communication across different time zones. The team members are listed below:
+
+* __Team Lead:__ Swarooph Seshadri (swarooph.nirmal@gmail.com)
+* Anand Raja (araja@mathworks.com)
+* Neel Kowdley (nkowdley@gmail.com)
+* Ahmed Madbouley (enter_email_address)
+* Soumen De (enter_email_address)
+* Zhi Chai (enter_email_address)
+
+In order to efficiently tackle the project, we divided ourselves into sub-teams as follows:
+* _Perception:_ Anand and Zhi
+* _Planning:_ Swarooph and Soumen
+* _Control:_ Neel and Ahmed
+
+Once each of the modules were separately implemented by the sub-teams, multiple people ended up working on integrating the modules, which is where a significant portion of time was spent.
+
+## Project Details
+### Perception
+The perception module consists of two components.
+1. Using the current pose of the car and prior knowledge of stop lines for traffic lights, determine the closest stop line ahead of the car. This is mostly contained in `tl_detector.py`.
+2. Using the image captured by on-board camera to detect and classify the traffic light. This information is then published for the planning module to react. Two trained Single-Shot Detector (SSD) detectors (one for simulation and one for real-world) are used in the perception module. This is contained in `tl_classifier.py`. The trained model was obtained from [https://github.com/iburris/Traffic-Light-Classification].
+
+We encountered several performance issues with running the classifier on the provided _Workspaces_. Some of these were resolved by running the perception loop at a slower rate (10Hz) than the camera rate (30 Hz). We measured the performance of the classifier at around 0.07s, which informed our choice for the perception rate. Still however, at different times, turning on the camera would cause a lag in the response of the system, leading the car to veer off the road. This was also reported by several others on Udacity forums. We later also tried docker runs, where the issue showed up.
+
+### Planning
+The goal of the planning module is to process the incoming waypoint list to adjust the velocity at each waypoint. Each waypoint is initially associated with the speed limit for the lane. The detected traffic light from the perception module is then processed to change the desired velocity profile of the car. The velocity profile is modulated to decelerate when a red light is ahead. This has the affect of stopping the car at or before the stop line for the traffic light. See `waypoint_updater.py` for more details.
+
+### Control
+The goal of the controls module is to  realize the velocity profile provided by the planning module. This is implemented inside `dbw_node.py` and `twist_controller.py` 
+
+To do this, we subscribe to the dbw_enabled topic which turns on and off the controller. As part of this controller, we enable our yaw and PID controller from the dbw_node.py. 
+
+Steering is obtained using the Yaw Controller, where we pass in the linear, angular and current velocities. Throttle is obtained by using our PID controller.  For more information on this, please look at our `twist_controller.py`
+
+
+
+## Installation and Running Instructions:
 
 Please use **one** of the two installation options, either native **or** docker installation.
 
