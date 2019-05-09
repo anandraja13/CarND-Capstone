@@ -3,7 +3,7 @@ This is the project repo for the final project of the Udacity Self-Driving Car N
 The capstone project for the final term of the Udacity self-driving car nanodegree is a system integration project that puts together perception, planning and control modules. The Robot Operating System (ROS) middleware is used as the platform for integration.
 
 ## Team: BluePillRedPill
-This project is a group effort - the 6 of us are part of the __BluePillRedPill__ team. The group effort was both rewarding. While it was interesting to meet (virtually) with people from different parts of the world interested in self-driving cars, it was also challenging to maintain communication across different time zones. The team members are listed below:
+This project is a group effort - the 6 of us are part of the __BluePillRedPill__ team. The group effort was both rewarding and challenging. While it was interesting to meet (virtually) with people from different parts of the world interested in self-driving cars, it was also challenging to maintain communication across different time zones. The team members are listed below:
 
 * __Team Lead:__ Swarooph Seshadri (swarooph.nirmal@gmail.com)
 * Anand Raja (araja@mathworks.com)
@@ -28,14 +28,10 @@ The perception module consists of two components.
 We encountered several performance issues with running the classifier on the provided _Workspaces_. Some of these were resolved by running the perception loop at a slower rate (10Hz) than the camera rate (30 Hz). We measured the performance of the classifier at around 0.07s, which informed our choice for the perception rate. Still however, at different times, turning on the camera would cause a lag in the response of the system, leading the car to veer off the road. This was also reported by several others on Udacity forums. We later also tried docker runs, where the issue showed up.
 
 ### Planning
-The goal of the planning module is to process the incoming waypoint list to adjust the velocity at each waypoint. Each waypoint is initially associated with the speed limit for the lane. The detected traffic light from the perception module is then processed to change the desired velocity profile of the car. The velocity profile is modulated to decelerate when a red light is ahead. This has the affect of stopping the car at or before the stop line for the traffic light. See `waypoint_updater.py` for more details.
+The goal of the planning module is to process the incoming waypoint list to adjust the velocity at each waypoint. Each waypoint is initially associated with a linear velocity (the speed limit) and an angular velocity for the lane. The detected traffic light from the perception module is then processed to change the desired linear velocity profile of the car. The velocity profile is modulated to decelerate when a red light is ahead. This has the effect of stopping the car at or before the stop line for the traffic light. See `waypoint_updater.py` for more details.
 
 ### Control
-The goal of the controls module is to  realize the velocity profile provided by the planning module. This is implemented inside `dbw_node.py` and `twist_controller.py` 
-
-To do this, we subscribe to the dbw_enabled topic which turns on and off the controller. As part of this controller, we enable our yaw and PID controller from the dbw_node.py. 
-
-Steering is obtained using the Yaw Controller, where we pass in the linear, angular and current velocities. Throttle is obtained by using our PID controller.  For more information on this, please look at our `twist_controller.py`
+The goal of the controls module is to  realize the velocity profile provided by the planning module. This is implemented inside `dbw_node.py` and `twist_controller.py`. To do this, we subscribe to the dbw_enabled topic which turns on and off the controller. As part of this controller, we enable our yaw and PID controller from the dbw_node.py. Steering is obtained using the Yaw Controller, where we pass in the linear, angular and current velocities. Throttle is obtained by using our PID controller.  For more information on this, please look at our `twist_controller.py`. In addition, an out of the box AutoWare based path follower code that implemented the pure-pursuit algorithm was used unaltered based on the project instructions.
 
 
 
