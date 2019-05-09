@@ -1,4 +1,9 @@
+[//]: # (Image References)
+
+[image1]: ./imgs/carlaAnimation.gif "Simulation Animation"
+
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
+
 # Udacity Self-Driving Car Capstone Project
 The capstone project for the final term of the Udacity self-driving car nanodegree is a system integration project that puts together perception, planning and control modules. The Robot Operating System (ROS) middleware is used as the platform for integration.
 
@@ -33,7 +38,8 @@ The goal of the planning module is to process the incoming waypoint list to adju
 ### Control
 The goal of the controls module is to  realize the velocity profile provided by the planning module. This is implemented inside `dbw_node.py` and `twist_controller.py`. To do this, we subscribe to the dbw_enabled topic which turns on and off the controller. As part of this controller, we enable our yaw and PID controller from the dbw_node.py. Steering is obtained using the Yaw Controller, where we pass in the linear, angular and current velocities. Throttle is obtained by using our PID controller.  For more information on this, please look at our `twist_controller.py`. In addition, an out of the box AutoWare based path follower code that implemented the pure-pursuit algorithm was used unaltered based on the project instructions.
 
-
+Animation of the simulation can be seen below:
+![alt text][image1]
 
 ## Installation and Running Instructions:
 
